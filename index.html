@@ -1,368 +1,261 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#090f1d">
-<meta name="description" content="注意課題の反応時間と学習セッションを別々に記録する、プライバシー重視のFOCUS LAB。">
-<title>FOCUS LAB — 注意力を実験的に記録する</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1020"><meta name="description" content="集中セッションを記録・可視化するプライバシー重視のフォーカス分析ツール。">
+<title>FOCUS LAB — 集中を見える化する</title>
 <style>
-:root{color-scheme:dark;--bg:#090f1d;--panel:#111c30;--panel2:#17243b;--line:#293b58;--text:#edf4ff;--muted:#9babc4;--cyan:#58e2d0;--blue:#89a5ff;--gold:#ffd27a;--red:#ff8c9d;--green:#7de0ad}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at 70% -12%,#20385b 0,transparent 45%),var(--bg);color:var(--text);font:15px/1.65 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-button,input{font:inherit}button{cursor:pointer}
-.wrap{max-width:1120px;margin:auto;padding:28px 22px 70px}
-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px}
-.brand{display:flex;align-items:center;gap:12px;font-weight:850;letter-spacing:.14em}
-.logo{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(135deg,var(--cyan),var(--blue));color:#07131c;font-size:22px}
-.tag{border:1px solid var(--line);border-radius:30px;padding:6px 11px;color:var(--muted);font-size:11px;letter-spacing:.08em}
-.hero{margin-bottom:25px}.eyebrow{color:var(--cyan);font-weight:800;font-size:11px;letter-spacing:.2em}
-h1{font-size:clamp(30px,5vw,48px);line-height:1.12;letter-spacing:-.04em;margin:8px 0 12px}
-.hero p{color:var(--muted);max-width:760px;margin:0}
-.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
-.panel{background:linear-gradient(145deg,rgba(19,31,52,.97),rgba(13,22,39,.97));border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 18px 55px #0002}
-.panel h2{font-size:15px;letter-spacing:.02em;margin:0 0 12px}
-.kicker{color:var(--cyan);font-size:10px;font-weight:800;letter-spacing:.16em}
-.lead{color:var(--muted);font-size:13px;margin:0 0 17px}
-.pvt-intro{display:flex;gap:12px;align-items:flex-start;margin:12px 0 16px}
-.pvt-icon{width:40px;height:40px;flex:none;border-radius:12px;background:#58e2d018;border:1px solid #58e2d04a;display:grid;place-items:center;color:var(--cyan);font-size:20px}
-.pvt-intro p{margin:0;color:var(--muted);font-size:12px}
-.statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:16px 0}
-.stat{background:#0b1527;border:1px solid #263854;border-radius:13px;padding:11px}
-.stat b{display:block;font-size:22px;font-variant-numeric:tabular-nums}
-.stat span{font-size:10px;color:var(--muted)}
-.clock{font-size:clamp(34px,6vw,50px);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.04em;text-align:center;margin:8px 0}
-.center{text-align:center}
-.btn{border:0;border-radius:12px;padding:12px 18px;font-weight:750;transition:filter .15s,transform .15s}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-.btn:not(:disabled):hover{filter:brightness(1.08);transform:translateY(-1px)}
-.primary{background:var(--cyan);color:#06141b}
-.secondary{background:#263853;color:var(--text);border:1px solid #3a5070}
-.danger{background:#482b3a;color:#ffd6df;border:1px solid #764052}
-.actions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
-.status{min-height:42px;margin:13px 0 0;text-align:center;color:var(--muted);font-size:12px}
-.response-pad{width:100%;min-height:155px;border:1px solid #3b5270;border-radius:18px;background:#10213a;color:var(--text);font-size:clamp(24px,4vw,36px);font-weight:850;letter-spacing:.05em;display:grid;place-items:center;margin:15px 0 8px;touch-action:manipulation;user-select:none}
-.response-pad.wait{background:linear-gradient(135deg,#15243a,#101b2c);border-color:#344863;color:#a9bad2}
-.response-pad.go{background:linear-gradient(135deg,#75f0b2,#42c98e);border-color:#a4ffd0;color:#071b16;box-shadow:0 0 40px #58e2d055}
-.response-pad.feedback{background:#14263c;border-color:#405775;color:var(--cyan)}
-.response-pad:disabled{opacity:.55;cursor:default}
-.help{color:var(--muted);font-size:11px;text-align:center}
-.bar{height:7px;background:#263853;border-radius:99px;overflow:hidden;margin:9px 0 2px}
-.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .15s}
-.note{padding:13px 15px;border:1px solid #344762;border-radius:14px;background:#111d31;color:#b9c7dc;font-size:12px;margin-top:15px}
-.note strong{color:var(--gold)}
-.side{display:grid;gap:16px;align-content:start}
-.summary{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.tile{background:#0b1527;border:1px solid #263854;border-radius:14px;padding:13px}
-.tile b{display:block;font-size:25px;font-variant-numeric:tabular-nums}
-.tile span{font-size:11px;color:var(--muted)}
-.muted{color:var(--muted);font-size:12px}
-.compare{font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
-.section{margin-top:16px}
-.studyclock{font-size:40px;font-weight:800;font-variant-numeric:tabular-nums;text-align:center;margin:12px 0}
-.rangebox{margin:12px 0}.rangebox label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);gap:8px}
-input[type=range]{width:100%;accent-color:var(--cyan)}
-.history{width:100%;border-collapse:collapse;font-size:12px}
-.history th,.history td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}
-.history th{font-size:10px;color:var(--muted);font-weight:600}
-.empty{text-align:center;color:var(--muted);padding:20px;font-size:12px}
-.chartwrap{height:170px;margin-top:8px}canvas{display:block;width:100%;height:100%}
-.pill{display:inline-block;padding:4px 8px;border:1px solid var(--line);border-radius:20px;color:var(--muted);font-size:10px}
-.results{display:none;margin-top:16px}
-.resultgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.resultitem{background:#0b1527;border:1px solid #263854;border-radius:13px;padding:12px}
-.resultitem b{display:block;font-size:22px;font-variant-numeric:tabular-nums}
-.resultitem span{font-size:10px;color:var(--muted)}
-.resultcopy{font-size:12px;color:var(--muted);margin:14px 0 0}
-footer{text-align:center;color:#71819b;font-size:11px;margin-top:28px}
-@media(max-width:780px){.grid{grid-template-columns:1fr}.wrap{padding:18px 13px 52px}header{margin-bottom:25px}.panel{padding:17px}.resultgrid{grid-template-columns:1fr 1fr}}
-</style>
-</head>
-<body>
-<main class="wrap">
-<header><div class="brand"><div class="logo">◎</div><span>FOCUS LAB</span></div><div class="tag">PERSONAL EXPERIMENT · BETA</div></header>
-<section class="hero">
-<div class="eyebrow">MEASURE WHAT CAN ACTUALLY BE OBSERVED</div>
-<h1>「集中しているつもり」を、<br>ひとつの点数にしない。</h1>
-<p>注意課題の反応時間と、勉強中の自己評価を別々に記録するツール。脳内の集中状態をカメラや操作回数だけで断定せず、観察できたデータをそのまま残します。</p>
-</section>
+:root{color-scheme:dark;--bg:#090e1c;--panel:#111a2d;--panel2:#16223a;--line:#263653;--text:#edf4ff;--muted:#91a2bd;--cyan:#55e2d0;--blue:#7c9cff;--pink:#ff83b7;--gold:#ffd27a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 75% -10%,#20345a 0,transparent 42%),var(--bg);color:var(--text);font:15px/1.6 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input{font:inherit}button{cursor:pointer;border:0}.wrap{max-width:1120px;margin:auto;padding:26px 22px 64px}.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:34px}.brand{display:flex;gap:12px;align-items:center;font-weight:800;letter-spacing:.13em}.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--cyan),var(--blue));display:grid;place-items:center;color:#07111f;font-size:20px}.tag{color:var(--muted);font-size:12px;border:1px solid var(--line);padding:6px 10px;border-radius:30px}
+.hero{margin:0 0 24px}.eyebrow{color:var(--cyan);font-size:11px;letter-spacing:.2em;font-weight:800}.hero h1{font-size:clamp(30px,5vw,48px);line-height:1.1;margin:10px 0}.hero p{color:var(--muted);max-width:660px;margin:0}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}.panel{background:linear-gradient(145deg,rgba(21,33,55,.96),rgba(13,22,39,.96));border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 16px 50px #0002}.panel h2{font-size:15px;margin:0 0 16px}.live{min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden}.live:before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:#55e2d00c;filter:blur(24px)}.live>*{position:relative}.score-label{color:var(--muted);font-size:12px;letter-spacing:.16em}.score{font-size:clamp(76px,12vw,112px);font-weight:800;line-height:1.15;letter-spacing:-.07em;font-variant-numeric:tabular-nums}.score small{font-size:22px;color:var(--muted);letter-spacing:0}.meter{height:8px;width:min(340px,85%);background:#263653;border-radius:20px;margin:10px auto 18px;overflow:hidden}.meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:20px;transition:width .5s}.clock{font-size:28px;font-weight:650;font-variant-numeric:tabular-nums;margin:5px 0 20px}.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.btn{padding:12px 20px;border-radius:12px;font-weight:750;transition:.2s}.primary{background:var(--cyan);color:#07151d}.primary:hover{filter:brightness(1.08);transform:translateY(-1px)}.secondary{background:#22314d;color:var(--text);border:1px solid #344967}.danger{background:#40263a;color:#ffc1d8}.hint{font-size:11px;color:var(--muted);margin-top:15px;max-width:440px}
+.side{display:grid;gap:16px;align-content:start}.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{background:#0d1729;border:1px solid #233450;border-radius:14px;padding:14px}.metric b{display:block;font-size:25px;font-variant-numeric:tabular-nums}.metric span{font-size:11px;color:var(--muted)}.check{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #233450}.check:first-of-type{border-top:0}.check label{font-size:13px}.check input{width:100%;max-width:135px;accent-color:var(--cyan)}
+.full{margin-top:16px}.chart-wrap{height:220px;position:relative}canvas{width:100%;height:100%;display:block}.chart-note{color:var(--muted);font-size:11px;margin-top:10px}
+.advice{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.tip{background:#0d1729;border:1px solid #233450;border-radius:15px;padding:15px}.tip .num{color:var(--cyan);font-size:11px;font-weight:800;letter-spacing:.12em}.tip b{display:block;margin:5px 0}.tip p{margin:0;color:var(--muted);font-size:12px}
+.history{width:100%;border-collapse:collapse;font-size:13px}.history th,.history td{text-align:left;padding:11px 8px;border-bottom:1px solid #263653}.history th{color:var(--muted);font-size:11px;font-weight:600}.empty{color:var(--muted);text-align:center;padding:22px}
+.notice{margin-top:18px;background:#151f34;border:1px solid #33415b;padding:14px 16px;border-radius:14px;color:#b5c4dc;font-size:12px}.notice strong{color:var(--gold)}
+.modal{display:none;position:fixed;inset:0;background:#030712d9;z-index:5;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.dialog{width:min(440px,100%);background:#142039;border:1px solid #3a4b6b;border-radius:20px;padding:24px}.dialog h2{margin:0 0 8px}.dialog p{color:var(--muted);font-size:13px}.range{width:100%;accent-color:var(--cyan)}.rangeval{font-size:30px;font-weight:800;color:var(--cyan)}
+.camera-box{position:relative;min-height:150px;background:#050a14;border:1px solid #263653;border-radius:14px;overflow:hidden;display:grid;place-items:center}
+.camera-box video{display:block;width:100%;max-height:210px;object-fit:cover;transform:scaleX(-1)}
+.camera-placeholder{padding:24px;text-align:center;color:var(--muted);font-size:12px}
+.camera-status{font-size:12px;color:var(--muted);margin-top:10px}
+.camera-privacy{font-size:11px;color:var(--muted);margin:9px 0 0}
 
+footer{color:#71819b;font-size:11px;text-align:center;margin-top:28px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.live{min-height:310px}.advice{grid-template-columns:1fr}.wrap{padding:18px 14px 48px}.panel{padding:18px}.top{margin-bottom:24px}}
+</style></head>
+<body><main class="wrap">
+<header class="top"><div class="brand"><div class="logo">◎</div><span>FOCUS LAB</span></div><div class="tag">PRIVATE BY DESIGN · BETA</div></header>
+<section class="hero"><div class="eyebrow">CAMERA-BASED VISUAL SIGNALS</div><h1>画面を見る動きを、データで確かめる。</h1><p>カメラ映像から顔の位置・目の向きの変化を端末内で解析。画面方向を向いていた割合を表示します。脳内の集中そのものを読み取る機能ではありません。</p></section>
 <div class="grid">
-<section class="panel">
-<div class="kicker">01 · SUSTAINED ATTENTION TASK</div>
-<h2 style="font-size:20px;margin:6px 0">10分間の反応課題</h2>
-<div class="pvt-intro"><div class="pvt-icon">↗</div><p>画面に合図が出たら、できるだけ速くボタンまたはスペースキーを押してください。合図はランダムな2〜10秒間隔で出ます。合図がない間は押さないでください。</p></div>
-<div class="statrow">
-<div class="stat"><b>10:00</b><span>測定時間</span></div>
-<div class="stat"><b>2–10秒</b><span>合図の間隔</span></div>
-<div class="stat"><b>500ms</b><span>遅い反応の目安</span></div>
-</div>
-<div class="clock" id="pvtClock">10:00</div>
-<div class="bar"><span id="pvtProgress"></span></div>
-<button class="response-pad wait" id="responsePad" disabled>ここに合図が出る</button>
-<div class="help">合図が出た瞬間から入力までを performance.now() で計測します。</div>
-<div class="actions" style="margin-top:15px">
-<button class="btn primary" id="pvtStart">10分テストを開始</button>
-<button class="btn danger" id="pvtAbort" disabled>中止する</button>
-</div>
-<div class="status" id="pvtStatus">開始すると10分間の連続テストが始まります。タブを切り替えると、正確な時間を保てないためテストを無効にします。</div>
-<div class="note"><strong>これは集中力の点数ではありません。</strong>持続的な注意課題での反応時間・遅い反応・先走り・見落としを記録します。知能、理解度、学力、脳内の思考を測定するものではありません。</div>
-</section>
-
+<section class="panel live"><div class="score-label">LIVE FOCUS ESTIMATE</div><div class="score"><span id="score">—</span><small> / 100</small></div><div class="meter"><span id="meter"></span></div><div class="clock" id="clock">00:00:00</div><div class="actions"><button class="btn primary" id="start">▶ カメラで計測スタート</button><button class="btn secondary" id="pause" disabled>一時停止</button><button class="btn danger" id="finish" disabled>終了・分析</button></div><div class="hint" id="status">カメラを許可すると8秒間の初期調整を行い、その後にリアルタイム推定を開始します。スコアは目・顔の向きなどの視覚サインであり、思考そのものを読み取るものではありません。</div></section>
 <aside class="side">
-<section class="panel">
-<div class="kicker">02 · STUDY SESSION</div>
-<h2 style="font-size:18px;margin:6px 0">勉強セッション記録</h2>
-<p class="lead">勉強時間だけを記録します。タイマーの数字を集中度に変換することはしません。</p>
-<div class="studyclock" id="studyClock">00:00:00</div>
-<div class="actions">
-<button class="btn primary" id="studyStart">開始</button>
-<button class="btn secondary" id="studyPause" disabled>一時停止</button>
-<button class="btn danger" id="studyFinish" disabled>終了</button>
-</div>
-<div class="rangebox">
-<label for="selfRate"><span>終了後の主観的な集中感</span><b id="selfRateText">3 / 5</b></label>
-<input type="range" id="selfRate" min="1" max="5" step="1" value="3">
-<div class="help" style="display:flex;justify-content:space-between"><span>散漫だった</span><span>集中できた</span></div>
-</div>
-<div class="status" id="studyStatus">セッションを開始すると時間を記録します。</div>
-</section>
-<section class="panel">
-<div class="kicker">03 · YOUR DATA</div>
-<h2>結果の見方</h2>
-<div class="summary">
-<div class="tile"><b id="lastMedian">—</b><span>直近の中央値 RT</span></div>
-<div class="tile"><b id="lastLapses">—</b><span>遅い反応（≥500ms）</span></div>
-<div class="tile"><b id="lastFalse">—</b><span>先走り反応</span></div>
-<div class="tile"><b id="lastOmissions">—</b><span>見落とし</span></div>
-</div>
-<div class="compare" id="baselineNote">個人内の比較データはまだありません。最初の数回は操作に慣れるための測定として扱います。</div>
-</section>
-</aside>
-</div>
+<section class="panel"><h2>CAMERA PREVIEW</h2><div class="camera-box"><video id="cameraPreview" autoplay muted playsinline></video><div class="camera-placeholder" id="cameraPlaceholder">計測開始後、ここにカメラ映像が表示されます</div></div><div class="camera-status" id="camStatus">カメラ停止中</div><p class="camera-privacy">映像フレームはブラウザ内で解析し、録画・保存・サーバー送信しません。音声は取得しません。</p></section>
+<section class="panel"><h2>VISUAL SIGNALS · 直近30秒</h2><div class="metric-grid"><div class="metric"><b id="faceRate">—</b><span>顔検出率</span></div><div class="metric"><b id="gazeRate">—</b><span>画面方向の一致率</span></div><div class="metric"><b id="observations">0</b><span>直近30秒の観測数</span></div><div class="metric"><b id="avg">—</b><span>カメラ推定スコア</span></div></div></section>
 
-<section class="panel results" id="pvtResults">
-<div class="kicker">TEST REPORT</div>
-<h2 style="font-size:19px;margin:6px 0 14px">反応課題の結果</h2>
-<div class="resultgrid">
-<div class="resultitem"><b id="rMedian">—</b><span>反応時間中央値 (ms)</span></div>
-<div class="resultitem"><b id="rMean">—</b><span>平均反応時間 (ms)</span></div>
-<div class="resultitem"><b id="rFast">—</b><span>速い10%の平均 (ms)</span></div>
-<div class="resultitem"><b id="rSlow">—</b><span>遅い10%の平均 (ms)</span></div>
-<div class="resultitem"><b id="rLapses">—</b><span>遅い反応 ≥500ms</span></div>
-<div class="resultitem"><b id="rErrors">—</b><span>先走り / 見落とし</span></div>
-</div>
-<p class="resultcopy" id="resultInterpretation"></p>
-<div class="chartwrap"><canvas id="rtChart"></canvas></div>
-</section>
-
-<section class="panel section">
-<div class="kicker">04 · SESSION HISTORY</div>
-<h2>過去の記録</h2>
-<div id="historyArea" class="empty">まだ記録はありません。</div>
-<button class="btn secondary" id="clearHistory" style="font-size:11px;padding:8px 12px;margin-top:12px">このブラウザの履歴を削除</button>
-</section>
-<section class="note section">
-<strong>測定の限界と使い方：</strong>10分のPsychomotor Vigilance Test（PVT）に着想を得たブラウザ上の反応課題です。標準的な研究室用装置と同一ではなく、画面更新・マウス/トラックパッド・OSの入力遅延が結果に影響します。できるだけ同じ端末・同じブラウザ・同じ入力方法で比べてください。集団の基準点や医学的な判定は表示しません。最初の1〜2回は操作への慣れの影響があり得るため、個人内の比較は過去3回分がたまってから表示します。
-</section>
-<footer>FOCUS LAB · カメラ・マイクは使いません。データはこのブラウザ内（localStorage）に保存され、サーバーには送信しません。</footer>
+</aside></div>
+<section class="panel full"><h2>LIVE FOCUS SIGNAL TIMELINE <span style="color:var(--muted);font-size:11px;font-weight:400">— 画面方向サインの推移</span></h2><div class="chart-wrap"><canvas id="liveChart"></canvas></div><div class="chart-note">スコアは初期調整時と似た目・顔の向きが観測された割合を中心とする視覚的な参考値です。画面を見ていても集中しているとは限らず、思考・理解・記憶は測定できません。</div></section>
+<section class="panel full" id="results" style="display:none"><h2>FOCUS SESSION REPORT</h2><div class="metric-grid" style="margin-bottom:18px"><div class="metric"><b id="rAvg">—</b><span>平均画面方向スコア</span></div><div class="metric"><b id="rPeak">—</b><span>最高画面方向スコア</span></div><div class="metric"><b id="rDuration">—</b><span>計測時間</span></div><div class="metric"><b id="rBreaks">—</b><span>顔未検出率</span></div></div><div class="chart-wrap"><canvas id="resultChart"></canvas></div><h2 style="margin-top:20px">測定データの読み方</h2><div class="advice" id="advice"></div></section>
+<section class="panel full"><h2>PAST SESSIONS</h2><div id="historyArea" class="empty">まだ記録はありません。最初のセッションを始めよう。</div><button class="btn secondary" id="clearHistory" style="margin-top:12px;font-size:12px;padding:8px 12px">履歴を削除</button></section>
+<div class="notice"><strong>重要：</strong>この値は「カメラから見て、初期調整時と似た目・顔の向きを保っていた割合」の推定値です。画面を見ていても頭の中で別のことを考えている場合や、画面外のノートに集中している場合は判別できません。カメラだけで本当の集中力を正確に測ることはできません。点数は能力・成績・健康の評価ではありません。</div>
+<footer>FOCUS LAB · カメラ映像はブラウザ内で処理し、録画・保存・送信しません。集計値のみ localStorage に保存します。マイクは使用しません。</footer>
 </main>
-
+<div class="modal" id="modal"><div class="dialog"><h2>セッションを終了する？</h2><p>結果を保存して、画面方向サインの推移と測定上の注意を表示します。</p><div class="actions"><button class="btn primary" id="confirmFinish">結果を見る</button><button class="btn secondary" id="cancelFinish">戻る</button></div></div></div>
 <script>
+
 (()=>{
-'use strict';
 const $=id=>document.getElementById(id);
-const DURATION=10*60*1000,MIN_RT=100,LAPSE_RT=500,MAX_WAIT=10000;
-let pvtActive=false,pvtState='idle',pvtStarted=0,pvtTimer=null,stimulusTimer=null,timeoutTimer=null,stimulusAt=null,trialCount=0,responseTimes=[],lapses=0,falseStarts=0,omissions=0,falseStartThisTrial=false,pvtEndAt=0;
-let studyState='idle',studyStarted=0,studyElapsed=0,studyTimer=null;
-const now=()=>performance.now();
-const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
-const fmt=(ms)=>{const s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),ss=s%60;return [h,m,ss].map(n=>String(n).padStart(2,'0')).join(':')};
-const mean=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:null;
-const median=a=>{if(!a.length)return null;const b=[...a].sort((x,y)=>x-y),m=Math.floor(b.length/2);return b.length%2?(b[m]):(b[m-1]+b[m])/2};
-const averageOfTail=(arr,fromEnd=false)=>{if(!arr.length)return null;const sorted=[...arr].sort((a,b)=>a-b);const count=Math.max(1,Math.ceil(sorted.length*.1));return mean(fromEnd?sorted.slice(-count):sorted.slice(0,count))};
-const round=n=>n===null||!Number.isFinite(n)?'—':Math.round(n);
-function safeRead(key){try{return JSON.parse(localStorage.getItem(key)||'[]')}catch{return []}}
-function safeWrite(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch{setPvtStatus('ブラウザの保存容量が足りず、履歴を保存できませんでした。')}}
-function setPvtStatus(t){$('pvtStatus').textContent=t}
-function setPad(text,kind,disabled){const p=$('responsePad');p.textContent=text;p.className='response-pad '+kind;p.disabled=disabled}
-function clearPvtTimers(){clearInterval(pvtTimer);clearTimeout(stimulusTimer);clearTimeout(timeoutTimer);pvtTimer=stimulusTimer=timeoutTimer=null}
-function pvtTick(){
- if(!pvtActive)return;
- const elapsed=now()-pvtStarted,remaining=Math.max(0,DURATION-elapsed);
- $('pvtClock').textContent=fmt(remaining);
- $('pvtProgress').style.width=(clamp(elapsed/DURATION,0,1)*100)+'%';
- if(remaining<=0)finishPvt(false);
+let running=false,busy=false,startedAt=0,elapsed=0,timer=null,samples=[],observations=[],calibrationSamples=[],baseline=null;
+let cameraStream=null,faceLandmarker=null,detectionRunning=false,detectionTimer=null,calibrationTimer=null,lastVideoTime=-1,lastChartAt=0;
+const video=$('cameraPreview');
+const fmt=ms=>{const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),ss=s%60;return [h,m,ss].map(n=>String(n).padStart(2,'0')).join(':')};
+const avg=a=>a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):null;
+const median=a=>{if(!a.length)return null;const b=[...a].sort((x,y)=>x-y),m=Math.floor(b.length/2);return b.length%2?b[m]:(b[m-1]+b[m])/2};
+function setStatus(message){$('status').textContent=message}
+function setCameraStatus(message){$('camStatus').textContent=message}
+function setCameraPreview(on){video.style.display=on?'block':'none';$('cameraPlaceholder').style.display=on?'none':'block'}
+async function ensureCamera(){
+ if(cameraStream&&cameraStream.getVideoTracks().some(t=>t.readyState==='live'))return;
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw new Error('このブラウザではカメラを利用できません。ChromeなどのHTTPS対応ブラウザで開いてください。');
+ cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480},frameRate:{ideal:15,max:20}},audio:false});
+ video.srcObject=cameraStream;
+ await video.play();
+ setCameraPreview(true);
+ setCameraStatus('カメラ接続済み · 音声なし');
 }
-function scheduleTrial(initial=false){
- if(!pvtActive)return;
- if(now()-pvtStarted>=DURATION){finishPvt(false);return}
- pvtState='waiting';stimulusAt=null;falseStartThisTrial=false;
- setPad('待機中…','wait',false);
- const delay=initial?(2000+Math.random()*8000):(1000+Math.random()*8000);
- stimulusTimer=setTimeout(showStimulus,delay);
-}
-function showStimulus(){
- if(!pvtActive)return;
- if(now()-pvtStarted>=DURATION){finishPvt(false);return}
- pvtState='painting';trialCount++;
- setPad('押せ！','go',false);
- requestAnimationFrame(frameTime=>{
-  if(pvtState!=='painting')return;
-  stimulusAt=frameTime;pvtState='go';
-  timeoutTimer=setTimeout(()=>{
-   if(pvtState==='go'){
-    omissions++;pvtState='feedback';stimulusAt=null;
-    setPad('見落とし','feedback',true);
-    stimulusTimer=setTimeout(scheduleTrial,1000);
-   }
-  },MAX_WAIT);
+async function ensureLandmarker(){
+ if(faceLandmarker)return;
+ setCameraStatus('顔・目の解析モデルを読み込み中…');
+ const vision=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/vision_bundle.mjs');
+ const fileset=await vision.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm');
+ faceLandmarker=await vision.FaceLandmarker.createFromOptions(fileset,{
+  baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task'},
+  runningMode:'VIDEO',numFaces:1,outputFaceBlendshapes:false,
+  minFaceDetectionConfidence:0.55,minFacePresenceConfidence:0.55,minTrackingConfidence:0.55
  });
 }
-function handleResponse(){
- if(pvtState==='waiting'){
-  if(!falseStartThisTrial){falseStarts++;falseStartThisTrial=true;setPvtStatus('合図が出る前の入力を「先走り」として記録しました。次は合図が出てから押してください。')}
-  return;
- }
- if(pvtState!=='go'||stimulusAt===null)return;
- const rt=now()-stimulusAt;
- if(rt<MIN_RT){falseStarts++;setPvtStatus('100ms未満の入力を先走りとして記録しました。合図が出たら自然に押してください。');return}
- responseTimes.push(rt);if(rt>=LAPSE_RT)lapses++;
- clearTimeout(timeoutTimer);timeoutTimer=null;stimulusAt=null;pvtState='feedback';
- setPad(Math.round(rt)+' ms','feedback',true);
- stimulusTimer=setTimeout(scheduleTrial,1000);
+function eyeSignal(l,irisIndex,cornerA,cornerB,upper,lower){
+ const iris=l[irisIndex],a=l[cornerA],b=l[cornerB],u=l[upper],d=l[lower];
+ const width=Math.abs(a.x-b.x);
+ if(!iris||!a||!b||!u||!d||width<0.0001)return null;
+ return {x:(iris.x-Math.min(a.x,b.x))/width,y:(iris.y-(u.y+d.y)/2)/width,open:Math.abs(u.y-d.y)/width};
 }
-function startPvt(){
- if(pvtActive)return;
- clearPvtTimers();pvtActive=true;pvtState='running';pvtStarted=now();pvtEndAt=pvtStarted+DURATION;
- trialCount=0;responseTimes=[];lapses=0;falseStarts=0;omissions=0;
- $('pvtStart').disabled=true;$('pvtAbort').disabled=false;$('pvtResults').style.display='none';
- setPad('待機中…','wait',false);setPvtStatus('測定中。合図が表示されたときだけ押してください。');
- pvtTick();pvtTimer=setInterval(pvtTick,100);scheduleTrial(true);
-}
-function abortPvt(reason){
- if(!pvtActive)return;
- clearPvtTimers();pvtActive=false;pvtState='aborted';stimulusAt=null;
- $('pvtStart').disabled=false;$('pvtAbort').disabled=true;
- setPad('テスト中止','wait',true);
- $('pvtClock').textContent='—';$('pvtProgress').style.width='0%';
- setPvtStatus(reason||'テストを中止しました。今回の途中データは保存していません。');
-}
-function percentileSummary(){
- const sorted=[...responseTimes].sort((a,b)=>a-b);
- return {median:median(sorted),mean:mean(sorted),fast:averageOfTail(sorted,false),slow:averageOfTail(sorted,true)};
-}
-function savePvt(){
- const m=percentileSummary(),record={
-  type:'pvt10',date:new Date().toISOString(),durationMs:DURATION,
-  responses:responseTimes.length,trials:trialCount,medianRT:round(m.median),
-  meanRT:round(m.mean),fast10:round(m.fast),slow10:round(m.slow),
-  lapses,falseStarts,omissions
+function getSignal(l){
+ if(!l||l.length<478)return null;
+ const e1=eyeSignal(l,468,33,133,159,145),e2=eyeSignal(l,473,362,263,386,374);
+ if(!e1||!e2)return null;
+ const faceWidth=Math.abs(l[33].x-l[263].x);
+ if(faceWidth<0.0001)return null;
+ const eyeMidX=(l[33].x+l[133].x+l[362].x+l[263].x)/4;
+ const eyeMidY=(l[159].y+l[145].y+l[386].y+l[374].y)/4;
+ const nose=l[1];
+ return {
+  x:(e1.x+e2.x)/2,y:(e1.y+e2.y)/2,open:(e1.open+e2.open)/2,
+  yaw:(nose.x-eyeMidX)/faceWidth,pitch:(nose.y-eyeMidY)/faceWidth
  };
- const history=safeRead('focuslab-v3-pvt');history.unshift(record);safeWrite('focuslab-v3-pvt',history.slice(0,50));
- return record;
 }
-function formatBaseline(current){
- const hist=safeRead('focuslab-v3-pvt').slice(1,4);
- if(hist.length<3)return '個人内の比較はまだありません。あと'+(3-hist.length)+'回の測定がたまると、過去3回の中央値と比較できます。最初の測定は慣熟の影響があるため、基準には使いません。';
- const baseRT=median(hist.map(x=>x.medianRT).filter(Number.isFinite));
- const baseLapses=median(hist.map(x=>x.lapses).filter(Number.isFinite));
- if(baseRT===null)return '比較できる基準データがまだありません。';
- const diff=current.medianRT-baseRT;
- const rtText=(diff>0?'+':'')+Math.round(diff)+' ms';
- const lapseText=baseLapses===null?'':(' / 遅い反応は基準 '+round(baseLapses)+' 回');
- return '過去3回の個人中央値は '+round(baseRT)+' ms。今回との差は '+rtText+lapseText+'。これは同じ端末・条件での変化の目安で、集中力の診断ではありません。';
+function isAligned(sig){
+ if(!baseline)return false;
+ return Math.abs(sig.x-baseline.x)<0.16&&
+  Math.abs(sig.y-baseline.y)<0.15&&
+  Math.abs(sig.yaw-baseline.yaw)<0.13&&
+  Math.abs(sig.pitch-baseline.pitch)<0.15&&
+  sig.open>Math.max(0.035,baseline.open*0.42);
 }
-function drawRT(values){
- const c=$('rtChart'),ctx=c.getContext('2d'),r=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
- c.width=Math.max(1,r.width*dpr);c.height=Math.max(1,r.height*dpr);ctx.scale(dpr,dpr);
- const w=r.width,h=r.height,p=30;ctx.clearRect(0,0,w,h);ctx.font='11px sans-serif';ctx.fillStyle='#9babc4';ctx.strokeStyle='#293b58';
- [0,500,1000].forEach(v=>{const y=h-p-(v/1200)*(h-p*1.3);ctx.beginPath();ctx.moveTo(p,y);ctx.lineTo(w-8,y);ctx.stroke();ctx.fillText(v+'ms',2,y-4)});
- if(!values.length)return;
- const max=Math.max(1200,...values),step=(w-p-10)/Math.max(1,values.length-1);
- ctx.beginPath();values.forEach((v,i)=>{const x=p+i*step,y=h-p-(Math.min(v,max)/max)*(h-p*1.3);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});
- ctx.strokeStyle='#58e2d0';ctx.lineWidth=2;ctx.stroke();
+function pushObservation(face,aligned){
+ const now=Date.now();
+ observations.push({time:now,face,aligned:!!aligned});
+ while(observations.length&&observations[0].time<now-60000)observations.shift();
 }
-function finishPvt(aborted){
- if(!pvtActive)return;
- clearPvtTimers();pvtActive=false;pvtState='done';stimulusAt=null;
- $('pvtStart').disabled=false;$('pvtAbort').disabled=true;$('pvtClock').textContent='00:00';
- $('pvtProgress').style.width='100%';setPad('テスト完了','feedback',true);
- const result=savePvt(),m=percentileSummary();
- $('rMedian').textContent=round(m.median);$('rMean').textContent=round(m.mean);
- $('rFast').textContent=round(m.fast);$('rSlow').textContent=round(m.slow);
- $('rLapses').textContent=lapses+' 回';$('rErrors').textContent=falseStarts+' / '+omissions;
- const enough=responseTimes.length>=30;
- $('resultInterpretation').textContent='有効反応 '+responseTimes.length+' 回 / 合図 '+trialCount+' 回。'+
-  (enough?'今回の反応データを記録しました。':'反応数が少ないため、解釈は特に慎重にしてください。')+
-  ' 500ms以上の反応を遅い反応として数えています。';
- $('baselineNote').textContent=formatBaseline(result);
- $('lastMedian').textContent=round(m.median)+' ms';$('lastLapses').textContent=lapses;
- $('lastFalse').textContent=falseStarts;$('lastOmissions').textContent=omissions;
- drawRT(responseTimes);$('pvtResults').style.display='block';
- setPvtStatus('10分テストが完了しました。数字は注意課題での反応結果であり、集中力の点数ではありません。');
- renderHistory();$('pvtResults').scrollIntoView({behavior:'smooth',block:'start'});
+function getRates(){
+ const now=Date.now(),recent=observations.filter(o=>now-o.time<=30000);
+ if(recent.length<8)return null;
+ const seen=recent.filter(o=>o.face),aligned=seen.filter(o=>o.aligned);
+ const faceRate=Math.round(seen.length/recent.length*100);
+ const gazeRate=seen.length?Math.round(aligned.length/seen.length*100):0;
+ return {faceRate,gazeRate,score:Math.round(aligned.length/recent.length*100),count:recent.length};
 }
-function onPvtKey(e){if(e.code==='Space'&&pvtActive){e.preventDefault();handleResponse()}}
-$('pvtStart').addEventListener('click',startPvt);
-$('pvtAbort').addEventListener('click',()=>{if(confirm('今回のテストを中止しますか？途中結果は保存されません。'))abortPvt('テストを中止しました。途中データは保存していません。')});
-$('responsePad').addEventListener('pointerdown',e=>{if(pvtActive){e.preventDefault();handleResponse()}});
-document.addEventListener('keydown',onPvtKey);
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&pvtActive)abortPvt('タブを離れたため、タイミングの正確さを保てずテストを無効にしました。最初からやり直してください。');if(document.hidden&&studyState==='running')pauseStudy(true)});
-window.addEventListener('blur',()=>{if(pvtActive)abortPvt('ブラウザのウィンドウが非アクティブになったため、テストを無効にしました。最初からやり直してください。')});
-
-function updateStudyClock(){
- const elapsed=studyState==='running'?now()-studyStarted:studyElapsed;
- $('studyClock').textContent=fmt(elapsed);
+function scoreNow(){const r=getRates();return r?r.score:null}
+function draw(canvasId,data){
+ const c=$(canvasId),ctx=c.getContext('2d'),rect=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+ c.width=rect.width*dpr;c.height=rect.height*dpr;ctx.scale(dpr,dpr);
+ const w=rect.width,h=rect.height,p=24;ctx.clearRect(0,0,w,h);ctx.font='11px sans-serif';ctx.fillStyle='#91a2bd';ctx.strokeStyle='#263653';ctx.lineWidth=1;
+ for(let v=0;v<=100;v+=25){const y=h-p-(v/100)*(h-p*1.6);ctx.beginPath();ctx.moveTo(p,y);ctx.lineTo(w-8,y);ctx.stroke();ctx.fillText(v,p,y-5)}
+ if(!data.length)return;
+ const pts=data.map((v,i)=>({x:p+(data.length===1?0:i/(data.length-1))*(w-p-12),y:h-p-(v/100)*(h-p*1.6)}));
+ ctx.beginPath();pts.forEach((q,i)=>i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y));ctx.lineTo(pts.at(-1).x,h-p);ctx.lineTo(pts[0].x,h-p);ctx.closePath();
+ const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#55e2d055');g.addColorStop(1,'#55e2d000');ctx.fillStyle=g;ctx.fill();
+ ctx.beginPath();pts.forEach((q,i)=>i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y));ctx.strokeStyle='#55e2d0';ctx.lineWidth=2.5;ctx.stroke();
+ pts.forEach(q=>{ctx.beginPath();ctx.arc(q.x,q.y,3,0,Math.PI*2);ctx.fillStyle='#55e2d0';ctx.fill()});
 }
-function startStudy(){
- if(studyState==='running')return;
- if(studyState==='paused'){studyStarted=now()-studyElapsed;studyState='running'}
- else{studyElapsed=0;studyStarted=now();studyState='running'}
- $('studyStart').disabled=true;$('studyPause').disabled=false;$('studyFinish').disabled=false;
- $('studyPause').textContent='一時停止';$('studyStatus').textContent='記録中。集中度の点数は自動生成しません。';
- clearInterval(studyTimer);studyTimer=setInterval(updateStudyClock,250);updateStudyClock();
+function update(){
+ if(!running)return;
+ const now=Date.now();elapsed=now-startedAt;$('clock').textContent=fmt(elapsed);
+ const rates=getRates(),s=rates?rates.score:null;
+ $('score').textContent=s===null?'—':s;$('meter').style.width=(s===null?0:s)+'%';
+ $('faceRate').textContent=rates?rates.faceRate+'%':'—';
+ $('gazeRate').textContent=rates?rates.gazeRate+'%':'—';
+ $('observations').textContent=rates?rates.count:0;
+ $('avg').textContent=samples.length?avg(samples):'—';
+ if(s===null){setStatus('カメラの測定データを集めています。顔をカメラに向け、画面を普段どおり見てください。')}
+ else if(rates.faceRate<45){setStatus('顔を十分に検出できません。照明・カメラ位置・顔の映り方を確認してください。')}
+ else {setStatus('測定中：集中に関係する視覚サインを集計しています。自己評価は別の記録として残ります。')}
+ if(s!==null&&now-lastChartAt>5000){samples.push(s);if(samples.length>180)samples.shift();lastChartAt=now;draw('liveChart',samples)}
 }
-function pauseStudy(auto){
- if(studyState!=='running')return;
- studyElapsed=now()-studyStarted;studyState='paused';clearInterval(studyTimer);studyTimer=null;
- $('studyStart').disabled=false;$('studyPause').disabled=false;$('studyPause').textContent='再開';
- $('studyStatus').textContent=auto?'別タブに移動したため一時停止しました。':'一時停止中。再開できます。';updateStudyClock();
+function stopDetection(){detectionRunning=false;if(detectionTimer)clearTimeout(detectionTimer);detectionTimer=null}
+function detectionLoop(){
+ if(!detectionRunning)return;
+ try{
+  if(video.readyState>=2&&video.currentTime!==lastVideoTime){
+   lastVideoTime=video.currentTime;
+   const result=faceLandmarker.detectForVideo(video,performance.now());
+   const lm=result.faceLandmarks&&result.faceLandmarks[0];
+   if(lm){
+    const sig=getSignal(lm);
+    if(sig){
+     if(calibrating)calibrationSamples.push(sig);
+     else if(running)pushObservation(true,isAligned(sig));
+    }else if(running)pushObservation(false,false);
+   }else if(running)pushObservation(false,false);
+  }
+ }catch(err){setCameraStatus('解析エラー：'+(err.message||'不明なエラー'))}
+ detectionTimer=setTimeout(detectionLoop,220);
 }
-function finishStudy(){
- if(studyState==='running')studyElapsed=now()-studyStarted;
- if(studyState==='idle')return;
- clearInterval(studyTimer);studyTimer=null;studyState='idle';
- const rating=Number($('selfRate').value),record={type:'study',date:new Date().toISOString(),durationMs:studyElapsed,selfRating:rating};
- const history=safeRead('focuslab-v3-study');history.unshift(record);safeWrite('focuslab-v3-study',history.slice(0,50));
- $('studyStart').disabled=false;$('studyPause').disabled=true;$('studyFinish').disabled=true;$('studyPause').textContent='一時停止';
- $('studyStatus').textContent='記録しました：'+fmt(studyElapsed)+' / 自己評価 '+rating+' / 5';
- studyElapsed=0;updateStudyClock();renderHistory();
+let calibrating=false;
+function startDetection(){stopDetection();lastVideoTime=-1;detectionRunning=true;detectionLoop()}
+function stopCamera(){
+ stopDetection();
+ if(cameraStream){cameraStream.getTracks().forEach(track=>track.stop());cameraStream=null}
+ video.pause();video.srcObject=null;setCameraPreview(false);setCameraStatus('カメラ停止中');
 }
-$('studyStart').addEventListener('click',startStudy);
-$('studyPause').addEventListener('click',()=>studyState==='running'?pauseStudy(false):startStudy());
-$('studyFinish').addEventListener('click',finishStudy);
-$('selfRate').addEventListener('input',()=>$('selfRateText').textContent=$('selfRate').value+' / 5');
+async function begin(){
+ if(busy||running)return;
+ busy=true;$('start').disabled=true;setStatus('カメラの許可を確認しています…');
+ try{
+  await ensureCamera();
+  await ensureLandmarker();
+  calibrationSamples=[];calibrating=true;setCameraStatus('初期調整中 · 画面中央を普段どおり見てください');
+  setStatus('8秒間、普段作業するときと同じ姿勢で画面中央を見てください。初期調整が終わると計測を開始します。');
+  startDetection();
+  calibrationTimer=setTimeout(()=>{
+   calibrating=false;calibrationTimer=null;
+   if(calibrationSamples.length<15){
+    stopCamera();$('start').disabled=false;busy=false;
+    setCameraStatus('顔を十分に検出できませんでした。明るさとカメラ位置を調整して再試行してください。');
+    setStatus('初期調整に失敗しました。測定値は作られていません。もう一度カメラ計測を開始してください。');
+    return;
+   }
+   baseline={x:median(calibrationSamples.map(s=>s.x)),y:median(calibrationSamples.map(s=>s.y)),open:median(calibrationSamples.map(s=>s.open)),yaw:median(calibrationSamples.map(s=>s.yaw)),pitch:median(calibrationSamples.map(s=>s.pitch))};
+   running=true;busy=false;elapsed=0;observations=[];samples=[];startedAt=Date.now();lastChartAt=0;
+   $('start').disabled=true;$('pause').disabled=false;$('finish').disabled=false;
+   $('pause').textContent='一時停止';setCameraStatus('計測中 · 映像は端末内で解析中');setStatus('測定開始！画面方向のサインを記録しています。');
+   timer=setInterval(update,1000);update();
+  },8000);
+ }catch(err){
+  calibrating=false;busy=false;stopCamera();$('start').disabled=false;
+  let message=err&&err.name==='NotAllowedError'?'カメラへのアクセスが許可されませんでした。Chromeのサイト設定でカメラを許可してください。':(err.message||'カメラを開始できませんでした。');
+  setCameraStatus(message);setStatus('カメラを利用できないため、スコアを出さずに停止しました。');
+ }
+}
+function pause(){
+ if(!running)return;
+ elapsed=Date.now()-startedAt;running=false;clearInterval(timer);timer=null;stopCamera();
+ $('pause').textContent='再開';$('pause').disabled=false;
+ $('finish').disabled=false;setStatus('一時停止中。再開時はカメラを再接続します。');
+}
+async function resume(){
+ if(busy||running)return;
+ busy=true;$('pause').disabled=true;setStatus('カメラを再接続しています…');
+ try{
+  await ensureCamera();running=true;busy=false;startedAt=Date.now()-elapsed;
+  $('pause').textContent='一時停止';$('pause').disabled=false;
+  setCameraStatus('計測中 · 映像は端末内で解析中');setStatus('計測を再開しました。');
+  startDetection();timer=setInterval(update,1000);update();
+ }catch(err){
+  busy=false;$('pause').disabled=false;setCameraStatus(err.message||'カメラを再接続できませんでした。');
+  setStatus('カメラを再接続できないため、一時停止を続けています。');
+ }
+}
+function makeAdvice(r){
+ let tips=[];
+ if(r.average===null)tips.push(['01 · NOT ENOUGH DATA','スコアを算出できませんでした','顔検出が不足しています。カメラ位置や照明を見直して、再度測定してください。']);
+ else if(r.faceRate<60)tips.push(['01 · FACE DETECTION','顔の映り方を調整','カメラを目線に近い高さに置き、顔全体が入るようにしてみてください。']);
+ else if(r.gazeRate<60)tips.push(['01 · GAZE SIGNAL','画面とノートの位置を確認','この指標は初期調整時の目・顔の向きとの近さを見ています。画面外の資料を見る作業には向きません。']);
+ tips.push(['03 · LIMITATION','スコアを集中力と思い込まない','画面を見ていても頭の中の集中は分かりません。自己評価や実際の学習成果と合わせて振り返ってください。']);
+ $('advice').innerHTML=tips.map(t=>'<article class="tip"><div class="num">'+t[0]+'</div><b>'+t[1]+'</b><p>'+t[2]+'</p></article>').join('');
+}
 function renderHistory(){
- const p=safeRead('focuslab-v3-pvt'),s=safeRead('focuslab-v3-study');
- const rows=[
-  ...p.map(x=>({date:x.date,type:'反応課題',duration:'10:00',detail:Number.isFinite(x.medianRT)?x.medianRT+' ms / 遅い '+x.lapses+'回':'—'})),
-  ...s.map(x=>({date:x.date,type:'勉強',duration:fmt(x.durationMs),detail:'自己評価 '+x.selfRating+'/5'}))
- ].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,30);
- if(!rows.length){$('historyArea').className='empty';$('historyArea').textContent='まだ記録はありません。';return}
+ const h=JSON.parse(localStorage.getItem('focuslab-history')||'[]');
+ if(!h.length){$('historyArea').className='empty';$('historyArea').textContent='まだ記録はありません。最初のセッションを始めよう。';return}
  $('historyArea').className='';
- $('historyArea').innerHTML='<table class="history"><thead><tr><th>日時</th><th>種類</th><th>時間</th><th>記録</th></tr></thead><tbody>'+
- rows.map(x=>'<tr><td>'+new Date(x.date).toLocaleString('ja-JP')+'</td><td>'+x.type+'</td><td>'+x.duration+'</td><td>'+x.detail+'</td></tr>').join('')+'</tbody></table>';
+ $('historyArea').innerHTML='<table class="history"><thead><tr><th>日時</th><th>時間</th><th>平均画面方向</th><th>顔検出率</th></tr></thead><tbody>'+
+ h.map(x=>'<tr><td>'+x.date+'</td><td>'+fmt(x.duration)+'</td><td>'+(x.average===null||x.average===undefined?'—':x.average)+'</td><td>'+(x.faceRate===null||x.faceRate===undefined?'—':x.faceRate+'%')+'</td></tr>').join('')+
+ '</tbody></table>';
 }
-$('clearHistory').addEventListener('click',()=>{
- if(!confirm('このブラウザに保存したFOCUS LABの全履歴を削除しますか？'))return;
- localStorage.removeItem('focuslab-v3-pvt');localStorage.removeItem('focuslab-v3-study');
- $('lastMedian').textContent='—';$('lastLapses').textContent='—';$('lastFalse').textContent='—';$('lastOmissions').textContent='—';
- $('baselineNote').textContent='個人内の比較データはまだありません。最初の数回は操作に慣れるための測定として扱います。';renderHistory();
-});
-window.addEventListener('pagehide',()=>{if(pvtActive)abortPvt('ページを離れたためテストを中止しました。')});
-renderHistory();
+function end(){
+ const wasRunning=running;
+ if(wasRunning)elapsed=Date.now()-startedAt;
+ running=false;busy=false;clearInterval(timer);timer=null;if(calibrationTimer)clearTimeout(calibrationTimer);calibrationTimer=null;calibrating=false;
+ const rates=getRates(),final=scoreNow();
+ if(final!==null&&(!samples.length||samples[samples.length-1]!==final))samples.push(final);
+ const values=[...samples],average=avg(values),peak=values.length?Math.max(...values):null;
+ const row={date:new Date().toLocaleString('ja-JP'),duration:elapsed,average,peak,faceRate:rates?rates.faceRate:null,gazeRate:rates?rates.gazeRate:null,values};
+ const history=JSON.parse(localStorage.getItem('focuslab-history')||'[]');history.unshift(row);localStorage.setItem('focuslab-history',JSON.stringify(history.slice(0,20)));
+ stopCamera();
+ $('rAvg').textContent=average===null?'—':average;$('rPeak').textContent=peak===null?'—':peak;$('rDuration').textContent=fmt(elapsed);
+ $('rBreaks').textContent=rates?(100-rates.faceRate)+'%':'—';
+ draw('resultChart',values);makeAdvice(row);$('results').style.display='block';
+ $('start').disabled=false;$('pause').disabled=true;$('finish').disabled=true;$('pause').textContent='一時停止';
+ setStatus('セッション終了。集計値を保存しました。');setCameraStatus('カメラ停止中');
+ renderHistory();$('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+$('start').onclick=begin;$('pause').onclick=()=>running?pause():resume();$('finish').onclick=()=>$('modal').classList.add('show');
+$('confirmFinish').onclick=()=>{$('modal').classList.remove('show');end()};
+$('cancelFinish').onclick=()=>$('modal').classList.remove('show');
+$('clearHistory').onclick=()=>{if(confirm('過去のセッション履歴をすべて削除しますか？')){localStorage.removeItem('focuslab-history');renderHistory()}};
+window.addEventListener('resize',()=>draw('liveChart',samples));
+window.addEventListener('pagehide',stopCamera);
+renderHistory();draw('liveChart',[]);
 })();
-</script>
-</body>
-</html>
+</script></body></html>
