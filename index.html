@@ -173,7 +173,7 @@ footer{text-align:center;color:#71819b;font-size:11px;margin-top:28px}
 'use strict';
 const $=id=>document.getElementById(id);
 const DURATION=10*60*1000,MIN_RT=100,LAPSE_RT=500,MAX_WAIT=10000;
-let pvtState='idle',pvtStarted=0,pvtTimer=null,stimulusTimer=null,timeoutTimer=null,stimulusAt=null,trialCount=0,responseTimes=[],lapses=0,falseStarts=0,omissions=0,falseStartThisTrial=false,pvtEndAt=0;
+let pvtActive=false,pvtState='idle',pvtStarted=0,pvtTimer=null,stimulusTimer=null,timeoutTimer=null,stimulusAt=null,trialCount=0,responseTimes=[],lapses=0,falseStarts=0,omissions=0,falseStartThisTrial=false,pvtEndAt=0;
 let studyState='idle',studyStarted=0,studyElapsed=0,studyTimer=null;
 const now=()=>performance.now();
 const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
@@ -189,14 +189,14 @@ function setPad(text,kind,disabled){const p=$('responsePad');p.textContent=text;
 function clearPvtTimers(){clearInterval(pvtTimer);clearTimeout(stimulusTimer);clearTimeout(timeoutTimer);pvtTimer=stimulusTimer=timeoutTimer=null}
 function pvtElapsed(){return pvtState==='running'?now()-pvtStarted:DURATION-Math.max(0,pvtEndAt-now())}
 function pvtTick(){
- if(pvtState!=='running')return;
+ if(!pvtActive)return;
  const elapsed=now()-pvtStarted,remaining=Math.max(0,DURATION-elapsed);
  $('pvtClock').textContent=fmt(remaining);
  $('pvtProgress').style.width=(clamp(elapsed/DURATION,0,1)*100)+'%';
  if(remaining<=0)finishPvt(false);
 }
 function scheduleTrial(initial=false){
- if(pvtState!=='running')return;
+ if(!pvtActive)return;
  if(now()-pvtStarted>=DURATION){finishPvt(false);return}
  pvtState='waiting';stimulusAt=null;falseStartThisTrial=false;
  setPad('待機中…','wait',false);
@@ -204,7 +204,7 @@ function scheduleTrial(initial=false){
  stimulusTimer=setTimeout(showStimulus,delay);
 }
 function showStimulus(){
- if(pvtState!=='running')return;
+ if(!pvtActive)return;
  if(now()-pvtStarted>=DURATION){finishPvt(false);return}
  pvtState='painting';trialCount++;
  setPad('押せ！','go',false);
@@ -234,16 +234,16 @@ function handleResponse(){
  stimulusTimer=setTimeout(scheduleTrial,1000);
 }
 function startPvt(){
- if(pvtState==='running')return;
- clearPvtTimers();pvtState='running';pvtStarted=now();pvtEndAt=pvtStarted+DURATION;
+ if(pvtActive)return;
+ clearPvtTimers();pvtActive=true;pvtState='running';pvtStarted=now();pvtEndAt=pvtStarted+DURATION;
  trialCount=0;responseTimes=[];lapses=0;falseStarts=0;omissions=0;
  $('pvtStart').disabled=true;$('pvtAbort').disabled=false;$('pvtResults').style.display='none';
  setPad('待機中…','wait',false);setPvtStatus('測定中。合図が表示されたときだけ押してください。');
  pvtTick();pvtTimer=setInterval(pvtTick,100);scheduleTrial(true);
 }
 function abortPvt(reason){
- if(pvtState!=='running')return;
- clearPvtTimers();pvtState='aborted';stimulusAt=null;
+ if(!pvtActive)return;
+ clearPvtTimers();pvtActive=false;pvtState='aborted';stimulusAt=null;
  $('pvtStart').disabled=false;$('pvtAbort').disabled=true;
  setPad('テスト中止','wait',true);
  $('pvtClock').textContent='—';$('pvtProgress').style.width='0%';
@@ -285,7 +285,7 @@ function drawRT(values){
  ctx.strokeStyle='#58e2d0';ctx.lineWidth=2;ctx.stroke();
 }
 function finishPvt(aborted){
- if(pvtState!=='running')return;
+ if(!pvtActive)return;
  clearPvtTimers();pvtState='done';stimulusAt=null;
  $('pvtStart').disabled=false;$('pvtAbort').disabled=true;$('pvtClock').textContent='00:00';
  $('pvtProgress').style.width='100%';setPad('テスト完了','feedback',true);
@@ -360,7 +360,7 @@ $('clearHistory').addEventListener('click',()=>{
  $('lastMedian').textContent='—';$('lastLapses').textContent='—';$('lastFalse').textContent='—';$('lastOmissions').textContent='—';
  $('baselineNote').textContent='個人内の比較データはまだありません。最初の数回は操作に慣れるための測定として扱います。';renderHistory();
 });
-window.addEventListener('pagehide',()=>{if(pvtState==='running')abortPvt('ページを離れたためテストを中止しました。')});
+window.addEventListener('pagehide',()=>{if(pvtActive)abortPvt('ページを離れたためテストを中止しました。')});
 renderHistory();
 })();
 </script>
