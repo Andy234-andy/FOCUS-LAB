@@ -195,12 +195,12 @@ function pvtTick(){
  $('pvtProgress').style.width=(clamp(elapsed/DURATION,0,1)*100)+'%';
  if(remaining<=0)finishPvt(false);
 }
-function scheduleTrial(){
+function scheduleTrial(initial=false){
  if(pvtState!=='running')return;
  if(now()-pvtStarted>=DURATION){finishPvt(false);return}
  pvtState='waiting';stimulusAt=null;falseStartThisTrial=false;
  setPad('待機中…','wait',false);
- const delay=2000+Math.random()*8000;
+ const delay=initial?(2000+Math.random()*8000):(1000+Math.random()*8000);
  stimulusTimer=setTimeout(showStimulus,delay);
 }
 function showStimulus(){
@@ -239,7 +239,7 @@ function startPvt(){
  trialCount=0;responseTimes=[];lapses=0;falseStarts=0;omissions=0;
  $('pvtStart').disabled=true;$('pvtAbort').disabled=false;$('pvtResults').style.display='none';
  setPad('待機中…','wait',false);setPvtStatus('測定中。合図が表示されたときだけ押してください。');
- pvtTick();pvtTimer=setInterval(pvtTick,100);scheduleTrial();
+ pvtTick();pvtTimer=setInterval(pvtTick,100);scheduleTrial(true);
 }
 function abortPvt(reason){
  if(pvtState!=='running')return;
