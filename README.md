@@ -1,95 +1,107 @@
 # FOCUS LAB
 
-**A privacy-first, camera-assisted screen-attention signal tracker.**
+**A privacy-first, browser-based sustained-attention task and study-session log.**
 
 🔗 **Live app:** https://focus-lab-github.vercel.app
 
-FOCUS LAB analyzes the visible direction of your eyes and face while you work, then visualizes how often those signals remain close to a short calibration baseline.
+FOCUS LAB deliberately keeps two kinds of information separate:
 
-> **Important:** This is not a direct measurement of concentration, comprehension, motivation, or mental state. Looking at a screen does not prove that someone is mentally focused, and looking away does not prove that they are distracted. Treat the result as a limited visual proxy—not a score of your ability.
+1. A **10-minute PVT-inspired visual reaction task** that records observable response performance.
+2. A **study-session timer and self-rating** that records the user's own impression of a study period.
 
-## What it measures
+There is no single "concentration score". The app does not infer concentration from gaze, mouse movement, or time spent on a page.
 
-- **Face detection rate:** how often a face is detected during the recent measurement window.
-- **Screen-direction match:** how often estimated eye and head landmarks stay near the user's own calibration baseline.
-- **Visual signal score:** the proportion of measurement frames where a face is detected and its eye/head signals match that baseline.
-- **Separate self-check-ins:** a personal 1–5 rating, stored separately and never used to fabricate the camera score.
-- **Session timeline and history:** recent estimates, session duration, and face-detection statistics.
+## 10-minute reaction task
 
-The score stays blank until enough live camera observations exist. There is no default starting score such as 72 or 77.
+A visual target appears at unpredictable intervals. Press the response button or Space as quickly as you can when it appears; do not press during the waiting period.
 
-## How to use
+The task records:
+- Median and mean reaction time
+- Mean reaction time of the fastest 10% and slowest 10% of valid responses
+- Slow responses (500 ms or longer)
+- False starts / anticipatory responses
+- Missed targets (no response within 10 seconds)
+- Number of valid responses and presented targets
 
-1. Open the [live app](https://focus-lab-github.vercel.app) in a modern browser over HTTPS.
-2. Press **カメラで計測スタート** and grant camera permission.
-3. Keep the camera at a comfortable position and look at the screen as you normally would during the 8-second calibration.
-4. The session begins after calibration. Pause, resume, or finish whenever needed.
-5. Optionally record your own 1–5 focus feeling. This is kept separate from the camera signal.
+Timing uses the browser's high-resolution `performance.now()` clock and a `requestAnimationFrame` timestamp for stimulus presentation. The initial wait is randomized from 2–10 seconds; after a response, the one-second feedback interval plus the next random wait totals 2–10 seconds. If the page becomes hidden during a test, the test is invalidated because background-tab scheduling can distort timing.
+
+The first three completed tests are treated as familiarization/history. After that, the app can compare a test with the previous three sessions from the same browser. No population ranking, age norm, or medical interpretation is shown.
+
+## Study-session log
+
+A separate stopwatch records study duration. At the end, the user can record a 1–5 self-rating. The app does not automatically infer concentration from elapsed time.
+
+## What this can and cannot tell you
+
+A 10-minute Psychomotor Vigilance Test (PVT) is widely used in research to assess behavioral vigilant attention using visual stimuli at random intervals. A response time of 500 ms or more is commonly treated as a lapse in the standard task. This website is a **PVT-inspired browser implementation**, not a certified or laboratory-equivalent PVT.
+
+The task measures response performance in this specific test—not comprehension, reasoning quality, motivation, memory, mind-wandering, or concentration throughout ordinary study. Browser, screen refresh, mouse/trackpad, operating system, and input latency can affect reaction time. For personal comparisons, use the same device, browser, and input method.
+
+Research has found that shorter PVT versions do not all behave like the 10-minute version: some 5-minute measures can be useful in specific samples, while a 3-minute version has shown convergent-validity limitations against the 10-minute version in sleep-loss research. This is why the app uses a 10-minute task rather than inventing a quick 30-second "focus score". Laboratory findings do not automatically validate this browser implementation or provide norms for adolescents.
 
 ## Privacy
 
-- Camera access starts only after the user presses the start button and grants browser permission.
-- Video frames are processed locally in the browser with MediaPipe Face Landmarker.
-- The app does not record, save, or upload camera frames.
-- The microphone is not requested or used.
-- Session summaries are stored in the browser's `localStorage`; clearing this site's browser storage removes them.
-- The MediaPipe JavaScript package, WASM runtime, and model are downloaded from their respective CDNs/model hosting when needed. Live camera frames are not sent to those servers by this app.
+- No camera or microphone is requested.
+- No video or audio is recorded.
+- Session and reaction-task summaries are stored in the browser's `localStorage`.
+- Data is not sent to a server by this app. Clearing this site's browser storage deletes local history.
 
-## Limitations
+## References
 
-This is a **visual screen-direction signal**, not an objective concentration test. It can be affected by camera placement, lighting, glasses, eye anatomy, calibration posture, and the user's activity. For example, someone can think deeply while looking away, read paper notes while focused, or look at a screen while daydreaming. The app cannot tell those situations apart.
-
-Do not use this score to judge health, intelligence, learning ability, school performance, or another person.
+- [Response speed measurements on the psychomotor vigilance test: how precise is precise enough?](https://pmc.ncbi.nlm.nih.gov/articles/PMC8240655/)
+- [Test-retest reliability of the 5-minute psychomotor vigilance task in working-aged females](https://pubmed.ncbi.nlm.nih.gov/34627928/)
+- [The 3-Minute Psychomotor Vigilance Test Demonstrates Inadequate Convergent Validity Relative to the 10-Minute Version](https://pubmed.ncbi.nlm.nih.gov/35242006/)
 
 ## Technology
 
-- HTML, CSS, and vanilla JavaScript
-- [MediaPipe Face Landmarker for Web](https://developers.google.com/edge/mediapipe/solutions/vision/face_landmarker/web_js)
-- Browser `getUserMedia` camera API
-- Canvas chart rendering and `localStorage`
+- HTML, CSS, vanilla JavaScript
+- `performance.now()` and `requestAnimationFrame()`
+- Canvas for reaction-time visualization
+- Browser `localStorage`
 
 ## Deployment
 
-The repository's `main` branch is connected to Vercel. Commits to `main` are configured to trigger deployments.
-
 - **Production:** https://focus-lab-github.vercel.app
 - **Repository:** https://github.com/Andy234-andy/FOCUS-LAB
+
+The repository's `main` branch is connected to Vercel for automatic deployments.
 
 ---
 
 # 日本語
 
-FOCUS LABは、カメラ映像から顔・目のランドマークを解析し、初期調整時と似た画面方向を保っていた割合を可視化するツールです。
+FOCUS LABは、**反応課題の成績**と**勉強中の本人の振り返り**を別々に記録するツールです。
 
-## できること
+カメラの視線やマウスの動きから、根拠のない「集中度」を作ることはしません。
 
-- 顔が検出できた割合を表示
-- 目と顔の向きが初期調整時に近かった割合を推定
-- 画面方向サインの推移をグラフ化
-- 本人の1〜5の自己評価を、カメラの数値とは別に記録
-- セッションの結果をブラウザ内に保存
+## 10分間の反応課題
 
-十分なカメラデータが集まるまではスコアを表示しません。初期値の72点・77点などを勝手に表示する仕組みはありません。
+ランダムなタイミングで画面に合図が出ます。合図が出たときだけボタンまたはスペースキーを押します。
 
-## 使い方
+記録する項目：
+- 反応時間の中央値・平均値
+- 速い反応10%・遅い反応10%の平均
+- 500ms以上の遅い反応
+- 先走り反応
+- 10秒以内に反応しなかった見落とし
+- 有効反応数・合図の回数
 
-1. [公開サイト](https://focus-lab-github.vercel.app)をHTTPS対応ブラウザで開く。
-2. 「カメラで計測スタート」を押し、ブラウザのカメラ利用を許可する。
-3. 普段どおりの姿勢で画面を見ながら、8秒間の初期調整を行う。
-4. 初期調整が終わると計測が始まる。
-5. 必要に応じて一時停止・再開・終了を行う。
+ブラウザの高分解能時計 `performance.now()` と `requestAnimationFrame` を利用します。初回の合図は2〜10秒のランダム間隔です。2回目以降は、1秒の結果表示と次のランダム待機を合わせて2〜10秒になるようにしています。テスト中に別タブへ移動した場合は、タイミングの正確さを維持できないため、そのテストを無効にします。
+
+最初の3回は操作への慣れを含む記録として扱います。その後は、同じブラウザに保存された過去3回の結果と個人内比較を表示できます。集団平均との差、年齢別の基準点、医学的判定は表示しません。
+
+## 勉強セッション記録
+
+別のタイマーで勉強時間を記録し、終了時に本人の主観的な集中感を1〜5で残せます。時間だけから集中度を推測することはありません。
+
+## 測定の限界
+
+10分間のPsychomotor Vigilance Test（PVT）は、ランダムな視覚刺激への反応を使って持続的な注意・覚醒状態を調べる研究課題として広く使われています。標準的なPVTでは500ms以上の反応を遅い反応（lapse）として扱うことがあります。
+
+ただし、このサイトは**PVTに着想を得たブラウザ上の反応課題**であり、認定された医療検査・研究室用装置ではありません。測れるのはこの課題中の反応パフォーマンスです。理解力、思考の深さ、記憶、意欲、普段の勉強中の集中状態そのものは測れません。
+
+画面更新、OS、ブラウザ、マウスやトラックパッドの入力遅延が結果に影響します。個人内で比較するときは、同じ端末・ブラウザ・入力方法を使ってください。研究室で得られた結果が、このブラウザ版や中高生の基準値を保証するわけではありません。
 
 ## プライバシー
 
-- カメラはユーザーが計測開始を押し、ブラウザで許可した後にだけ動作する。
-- 映像フレームはMediaPipeを使ってブラウザ内で解析する。
-- 映像の録画・保存・サーバー送信はしない。
-- マイクは要求せず、使用しない。
-- セッションの集計値だけをブラウザの `localStorage` に保存する。
-- 解析用ライブラリ・WASM・モデルはCDN等から読み込むが、ライブ映像を送信する処理はない。
-
-## 大切な限界
-
-この数値は**集中力そのものではなく、画面方向に関する視覚的な代理指標**です。画面を見ていても頭の中で別のことを考えている場合や、画面外のノートを見ながら深く考えている場合は区別できません。カメラだけで理解度・思考・記憶・本当の集中状態を読み取ることはできません。
-
-健康・知能・学力・能力を評価するためには使わないでください。
+カメラ・マイクは使用しません。記録はブラウザ内の `localStorage` に保存し、サーバーへ送信しません。ブラウザのサイトデータを削除すると履歴も消えます。
