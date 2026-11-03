@@ -309,6 +309,7 @@ $('pvtAbort').addEventListener('click',()=>{if(confirm('今回のテストを中
 $('responsePad').addEventListener('pointerdown',e=>{if(pvtActive){e.preventDefault();handleResponse()}});
 document.addEventListener('keydown',onPvtKey);
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&pvtActive)abortPvt('タブを離れたため、タイミングの正確さを保てずテストを無効にしました。最初からやり直してください。');if(document.hidden&&studyState==='running')pauseStudy(true)});
+window.addEventListener('blur',()=>{if(pvtActive)abortPvt('ブラウザのウィンドウが非アクティブになったため、テストを無効にしました。最初からやり直してください。')});
 
 function updateStudyClock(){
  const elapsed=studyState==='running'?now()-studyStarted:studyElapsed;
