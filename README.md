@@ -2,7 +2,7 @@
 
 **A privacy-first, camera-assisted screen-attention signal tracker.**
 
-🔗 **Live app:** https://focus-lab-andy127.vercel.app
+🔗 **Live app:** https://focus-lab-github.vercel.app
 
 FOCUS LAB analyzes the visible direction of your eyes and face while you work, then visualizes how often those signals remain close to a short calibration baseline.
 
@@ -20,7 +20,7 @@ The score stays blank until enough live camera observations exist. There is no d
 
 ## How to use
 
-1. Open the [live app](https://focus-lab-andy127.vercel.app) in a modern browser over HTTPS.
+1. Open the [live app](https://focus-lab-github.vercel.app) in a modern browser over HTTPS.
 2. Press **カメラで計測スタート** and grant camera permission.
 3. Keep the camera at a comfortable position and look at the screen as you normally would during the 8-second calibration.
 4. The session begins after calibration. Pause, resume, or finish whenever needed.
@@ -52,7 +52,7 @@ Do not use this score to judge health, intelligence, learning ability, school pe
 
 The repository's `main` branch is connected to Vercel. Commits to `main` are configured to trigger deployments.
 
-- **Production:** https://focus-lab-andy127.vercel.app
+- **Production:** https://focus-lab-github.vercel.app
 - **Repository:** https://github.com/Andy234-andy/FOCUS-LAB
 
 ---
@@ -73,7 +73,7 @@ FOCUS LABは、カメラ映像から顔・目のランドマークを解析し�
 
 ## 使い方
 
-1. [公開サイト](https://focus-lab-andy127.vercel.app)をHTTPS対応ブラウザで開く。
+1. [公開サイト](https://focus-lab-github.vercel.app)をHTTPS対応ブラウザで開く。
 2. 「カメラで計測スタート」を押し、ブラウザのカメラ利用を許可する。
 3. 普段どおりの姿勢で画面を見ながら、8秒間の初期調整を行う。
 4. 初期調整が終わると計測が始まる。
