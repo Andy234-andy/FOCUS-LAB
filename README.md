@@ -1,69 +1,95 @@
 # FOCUS LAB
 
-**A privacy-first focus session tracker that turns your study/work sessions into understandable insights.**
+**A privacy-first, camera-assisted screen-attention signal tracker.**
 
-🔗 **Live demo:** https://focus-lab-andy127.vercel.app
+🔗 **Live app:** https://focus-lab-andy127.vercel.app
 
-FOCUS LAB helps you record a focus session, check in with yourself, and review simple visual summaries afterwards. It is designed as a lightweight reflection tool—not as a medical or scientifically validated concentration test.
+FOCUS LAB analyzes the visible direction of your eyes and face while you work, then visualizes how often those signals remain close to a short calibration baseline.
 
-## Features
+> **Important:** This is not a direct measurement of concentration, comprehension, motivation, or mental state. Looking at a screen does not prove that someone is mentally focused, and looking away does not prove that they are distracted. Treat the result as a limited visual proxy—not a score of your ability.
 
-- **Live session timer** — start, pause, resume, and finish a session.
-- **Estimated focus score** — a 0–100 indicator based on self-check-ins, interaction/activity signals, idle time, and interruptions.
-- **Self check-ins** — record how focused you feel during a session.
-- **Live chart and session summary** — review score changes, average/peak estimates, duration, and interruptions.
-- **Session history** — keep recent results in your browser.
-- **Privacy-first by design** — no account, server-side session database, camera, or microphone is used.
+## What it measures
+
+- **Face detection rate:** how often a face is detected during the recent measurement window.
+- **Screen-direction match:** how often estimated eye and head landmarks stay near the user's own calibration baseline.
+- **Visual signal score:** the proportion of measurement frames where a face is detected and its eye/head signals match that baseline.
+- **Separate self-check-ins:** a personal 1–5 rating, stored separately and never used to fabricate the camera score.
+- **Session timeline and history:** recent estimates, session duration, and face-detection statistics.
+
+The score stays blank until enough live camera observations exist. There is no default starting score such as 72 or 77.
 
 ## How to use
 
-1. Open the [live app](https://focus-lab-andy127.vercel.app).
-2. Press **計測開始** to begin a session.
-3. Use **集中度を記録** from time to time to record your own rating.
-4. Pause/resume when needed.
-5. Finish the session to see your summary and suggestions.
-
-## Run locally
-
-No build step or package installation is required.
-
-1. Download or clone this repository.
-2. Open `index.html` in a modern browser.
+1. Open the [live app](https://focus-lab-andy127.vercel.app) in a modern browser over HTTPS.
+2. Press **カメラで計測スタート** and grant camera permission.
+3. Keep the camera at a comfortable position and look at the screen as you normally would during the 8-second calibration.
+4. The session begins after calibration. Pause, resume, or finish whenever needed.
+5. Optionally record your own 1–5 focus feeling. This is kept separate from the camera signal.
 
 ## Privacy
 
-Session history is stored in the browser's `localStorage`. Clearing this site's browser storage removes the locally saved history. The app does not request camera or microphone access and does not send session records to a backend.
+- Camera access starts only after the user presses the start button and grants browser permission.
+- Video frames are processed locally in the browser with MediaPipe Face Landmarker.
+- The app does not record, save, or upload camera frames.
+- The microphone is not requested or used.
+- Session summaries are stored in the browser's `localStorage`; clearing this site's browser storage removes them.
+- The MediaPipe JavaScript package, WASM runtime, and model are downloaded from their respective CDNs/model hosting when needed. Live camera frames are not sent to those servers by this app.
 
-## Important limitations
+## Limitations
 
-The score is an **experimental estimate**, not an objective measurement of attention. Keyboard/mouse interaction can be low during perfectly focused activities such as reading, watching a lesson, or thinking. For that reason, the score should be treated as a reflection aid—not a judgment of your ability, health, or performance.
+This is a **visual screen-direction signal**, not an objective concentration test. It can be affected by camera placement, lighting, glasses, eye anatomy, calibration posture, and the user's activity. For example, someone can think deeply while looking away, read paper notes while focused, or look at a screen while daydreaming. The app cannot tell those situations apart.
+
+Do not use this score to judge health, intelligence, learning ability, school performance, or another person.
+
+## Technology
+
+- HTML, CSS, and vanilla JavaScript
+- [MediaPipe Face Landmarker for Web](https://developers.google.com/edge/mediapipe/solutions/vision/face_landmarker/web_js)
+- Browser `getUserMedia` camera API
+- Canvas chart rendering and `localStorage`
 
 ## Deployment
 
-The production app is hosted on Vercel:
+The repository's `main` branch is connected to Vercel. Commits to `main` are configured to trigger deployments.
 
-- https://focus-lab-andy127.vercel.app
-
-The GitHub repository's `main` branch is intended to be the source of truth for the Git-connected Vercel project. Commits pushed to `main` should trigger a production deployment once the Git integration is connected.
+- **Production:** https://focus-lab-andy127.vercel.app
+- **Repository:** https://github.com/Andy234-andy/FOCUS-LAB
 
 ---
 
 # 日本語
 
-FOCUS LABは、勉強や作業中の集中セッションを記録し、グラフや振り返りで「集中の傾向」を見える化する軽量ツールです。
+FOCUS LABは、カメラ映像から顔・目のランドマークを解析し、初期調整時と似た画面方向を保っていた割合を可視化するツールです。
 
-## 主な機能
+## できること
 
-- 計測の開始・一時停止・再開・終了
-- 自己評価、操作状況、アイドル時間、中断回数などを使った推定スコア
-- 集中度の推移を表示するリアルタイムグラフ
-- セッション終了後の平均・最高スコア、時間、中断回数のまとめ
-- ブラウザ内に保存するセッション履歴
+- 顔が検出できた割合を表示
+- 目と顔の向きが初期調整時に近かった割合を推定
+- 画面方向サインの推移をグラフ化
+- 本人の1〜5の自己評価を、カメラの数値とは別に記録
+- セッションの結果をブラウザ内に保存
+
+十分なカメラデータが集まるまではスコアを表示しません。初期値の72点・77点などを勝手に表示する仕組みはありません。
+
+## 使い方
+
+1. [公開サイト](https://focus-lab-andy127.vercel.app)をHTTPS対応ブラウザで開く。
+2. 「カメラで計測スタート」を押し、ブラウザのカメラ利用を許可する。
+3. 普段どおりの姿勢で画面を見ながら、8秒間の初期調整を行う。
+4. 初期調整が終わると計測が始まる。
+5. 必要に応じて一時停止・再開・終了を行う。
 
 ## プライバシー
 
-セッション履歴はブラウザ内の `localStorage` に保存されます。アカウント登録やサーバーへのセッションデータ送信は不要です。カメラ・マイクも使用しません。
+- カメラはユーザーが計測開始を押し、ブラウザで許可した後にだけ動作する。
+- 映像フレームはMediaPipeを使ってブラウザ内で解析する。
+- 映像の録画・保存・サーバー送信はしない。
+- マイクは要求せず、使用しない。
+- セッションの集計値だけをブラウザの `localStorage` に保存する。
+- 解析用ライブラリ・WASM・モデルはCDN等から読み込むが、ライブ映像を送信する処理はない。
 
-## 注意
+## 大切な限界
 
-集中スコアは実験的な推定値であり、科学的・医学的に確立された集中力検査ではありません。読書・思考・動画学習のように操作が少ない活動では、集中していても低く表示される場合があります。自分の状態を振り返るための参考値として使ってください。
+この数値は**集中力そのものではなく、画面方向に関する視覚的な代理指標**です。画面を見ていても頭の中で別のことを考えている場合や、画面外のノートを見ながら深く考えている場合は区別できません。カメラだけで理解度・思考・記憶・本当の集中状態を読み取ることはできません。
+
+健康・知能・学力・能力を評価するためには使わないでください。
