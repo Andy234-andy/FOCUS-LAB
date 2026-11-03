@@ -187,7 +187,6 @@ function safeWrite(key,value){try{localStorage.setItem(key,JSON.stringify(value)
 function setPvtStatus(t){$('pvtStatus').textContent=t}
 function setPad(text,kind,disabled){const p=$('responsePad');p.textContent=text;p.className='response-pad '+kind;p.disabled=disabled}
 function clearPvtTimers(){clearInterval(pvtTimer);clearTimeout(stimulusTimer);clearTimeout(timeoutTimer);pvtTimer=stimulusTimer=timeoutTimer=null}
-function pvtElapsed(){return pvtState==='running'?now()-pvtStarted:DURATION-Math.max(0,pvtEndAt-now())}
 function pvtTick(){
  if(!pvtActive)return;
  const elapsed=now()-pvtStarted,remaining=Math.max(0,DURATION-elapsed);
@@ -286,7 +285,7 @@ function drawRT(values){
 }
 function finishPvt(aborted){
  if(!pvtActive)return;
- clearPvtTimers();pvtState='done';stimulusAt=null;
+ clearPvtTimers();pvtActive=false;pvtState='done';stimulusAt=null;
  $('pvtStart').disabled=false;$('pvtAbort').disabled=true;$('pvtClock').textContent='00:00';
  $('pvtProgress').style.width='100%';setPad('テスト完了','feedback',true);
  const result=savePvt(),m=percentileSummary();
@@ -304,12 +303,12 @@ function finishPvt(aborted){
  setPvtStatus('10分テストが完了しました。数字は注意課題での反応結果であり、集中力の点数ではありません。');
  renderHistory();$('pvtResults').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function onPvtKey(e){if(e.code==='Space'&&pvtState==='running'){e.preventDefault();handleResponse()}}
+function onPvtKey(e){if(e.code==='Space'&&pvtActive){e.preventDefault();handleResponse()}}
 $('pvtStart').addEventListener('click',startPvt);
 $('pvtAbort').addEventListener('click',()=>{if(confirm('今回のテストを中止しますか？途中結果は保存されません。'))abortPvt('テストを中止しました。途中データは保存していません。')});
-$('responsePad').addEventListener('pointerdown',e=>{if(pvtState==='running'){e.preventDefault();handleResponse()}});
+$('responsePad').addEventListener('pointerdown',e=>{if(pvtActive){e.preventDefault();handleResponse()}});
 document.addEventListener('keydown',onPvtKey);
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&pvtState==='running')abortPvt('タブを離れたため、タイミングの正確さを保てずテストを無効にしました。最初からやり直してください。');if(document.hidden&&studyState==='running')pauseStudy(true)});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&pvtActive)abortPvt('タブを離れたため、タイミングの正確さを保てずテストを無効にしました。最初からやり直してください。');if(document.hidden&&studyState==='running')pauseStudy(true)});
 
 function updateStudyClock(){
  const elapsed=studyState==='running'?now()-studyStarted:studyElapsed;
