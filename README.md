@@ -23,7 +23,7 @@ The task records:
 - Missed targets (no response within 10 seconds)
 - Number of valid responses and presented targets
 
-Timing uses the browser's high-resolution `performance.now()` clock and a `requestAnimationFrame` timestamp for stimulus presentation. The initial wait is randomized from 2–10 seconds; after a response, the one-second feedback interval plus the next random wait totals 2–10 seconds. If the page becomes hidden during a test, the test is invalidated because background-tab scheduling can distort timing.
+Timing uses the browser's high-resolution `performance.now()` clock and a `requestAnimationFrame` timestamp for stimulus presentation. The initial wait is randomized from 2–10 seconds; after a response, the one-second feedback interval plus the next random wait totals 2–10 seconds. If the page becomes hidden or the browser window loses focus during a test, the test is invalidated because background scheduling and focus changes can distort timing.
 
 The first three completed tests are treated as familiarization/history. After that, the app can compare a test with the previous three sessions from the same browser. No population ranking, age norm, or medical interpretation is shown.
 
@@ -86,7 +86,7 @@ FOCUS LABは、**反応課題の成績**と**勉強中の本人の振り返り**
 - 10秒以内に反応しなかった見落とし
 - 有効反応数・合図の回数
 
-ブラウザの高分解能時計 `performance.now()` と `requestAnimationFrame` を利用します。初回の合図は2〜10秒のランダム間隔です。2回目以降は、1秒の結果表示と次のランダム待機を合わせて2〜10秒になるようにしています。テスト中に別タブへ移動した場合は、タイミングの正確さを維持できないため、そのテストを無効にします。
+ブラウザの高分解能時計 `performance.now()` と `requestAnimationFrame` を利用します。初回の合図は2〜10秒のランダム間隔です。2回目以降は、1秒の結果表示と次のランダム待機を合わせて2〜10秒になるようにしています。テスト中に別タブへ移動したり、ブラウザのウィンドウが非アクティブになった場合は、タイミングの正確さを維持できないため、そのテストを無効にします。
 
 最初の3回は操作への慣れを含む記録として扱います。その後は、同じブラウザに保存された過去3回の結果と個人内比較を表示できます。集団平均との差、年齢別の基準点、医学的判定は表示しません。
 
